@@ -1,1 +1,58 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>打地鼠</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <div class="app">
+      <header class="header">
+        <h1 class="title">打地鼠</h1>
+      </header>
 
+      <section class="hud" aria-label="遊戲控制與資訊">
+        <div class="left">
+          <label for="difficulty" class="label">難度</label>
+          <select id="difficulty" class="select" aria-label="難度">
+            <option value="easy">容易</option>
+            <option value="normal" selected>普通</option>
+            <option value="hard">困難</option>
+          </select>
+        </div>
+        <div class="center">
+          <div class="stat"><span class="stat-label">時間</span><span id="timeLeft" class="stat-value">30</span><span class="stat-suffix">秒</span></div>
+          <div class="stat"><span class="stat-label">分數</span><span id="score" class="stat-value">0</span></div>
+        </div>
+        <div class="right">
+          <button id="startBtn" class="btn primary">開始</button>
+          <button id="pauseBtn" class="btn" disabled>暫停</button>
+          <button id="resetBtn" class="btn">重設</button>
+        </div>
+      </section>
+
+      <main class="main" aria-label="遊戲版面">
+        <div id="board" class="board" role="grid" aria-label="打地鼠遊戲板">
+          <button class="hole" role="gridcell" aria-label="洞 1" data-index="0"><span class="mole" aria-hidden="true"></span></button>
+          <button class="hole" role="gridcell" aria-label="洞 2" data-index="1"><span class="mole" aria-hidden="true"></span></button>
+          <button class="hole" role="gridcell" aria-label="洞 3" data-index="2"><span class="mole" aria-hidden="true"></span></button>
+          <button class="hole" role="gridcell" aria-label="洞 4" data-index="3"><span class="mole" aria-hidden="true"></span></button>
+          <button class="hole" role="gridcell" aria-label="洞 5" data-index="4"><span class="mole" aria-hidden="true"></span></button>
+          <button class="hole" role="gridcell" aria-label="洞 6" data-index="5"><span class="mole" aria-hidden="true"></span></button>
+          <button class="hole" role="gridcell" aria-label="洞 7" data-index="6"><span class="mole" aria-hidden="true"></span></button>
+          <button class="hole" role="gridcell" aria-label="洞 8" data-index="7"><span class="mole" aria-hidden="true"></span></button>
+          <button class="hole" role="gridcell" aria-label="洞 9" data-index="8"><span class="mole" aria-hidden="true"></span></button>
+        </div>
+      </main>
+
+      <footer class="footer">
+        <span>點擊或觸控出現的地鼠來得分！</span>
+      </footer>
+    </div>
+  </body>
+</html>
