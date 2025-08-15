@@ -107,15 +107,22 @@ class SymbolAsset {
 async function loadImagesFromFiles(files) {
 	const images = [];
 	for (const file of files) {
-		if (!file.type.startsWith('image/')) continue;
+		if (!file.type || !file.type.startsWith('image/')) continue;
 		const url = URL.createObjectURL(file);
-		const img = await new Promise((resolve, reject) => {
+		const img = await new Promise((resolve) => {
 			const el = new Image();
-			el.onload = () => resolve(el);
-			el.onerror = reject;
+			el.onload = () => {
+				URL.revokeObjectURL(url);
+				resolve(el);
+			};
+			el.onerror = (e) => {
+				console.warn('圖片載入失敗，已跳過：', file.name || file, e);
+				URL.revokeObjectURL(url);
+				resolve(null);
+			};
 			el.src = url;
 		});
-		images.push(img);
+		if (img) images.push(img);
 	}
 	return images;
 }
@@ -498,6 +505,21 @@ dom.saveSettingsBtn.addEventListener('click', saveSettings);
 
 updateMaxInfo();
 
+// 全域錯誤處理，將錯誤顯示在摘要
+window.addEventListener('error', (e) => {
+	try { dom.summary.textContent = '執行錯誤：' + (e && e.message ? e.message : String(e)); } catch (_) {}
+});
+window.addEventListener('unhandledrejection', (e) => {
+	try { dom.summary.textContent = '未捕捉的 Promise 錯誤：' + (e && e.reason && e.reason.message ? e.reason.message : String(e.reason || e)); } catch (_) {}
+});
+
+// 載入後自動產生一組示範卡（以數字為符號），避免空白頁面
+window.addEventListener('DOMContentLoaded', () => {
+	setTimeout(() => {
+		try { dom.generateBtn.click(); } catch (_) {}
+	}, 50);
+});
+
 // 主流程：產出卡片
 let lastGenerated = null; // { design, cards, symbolCanvases }
 
@@ -511,6 +533,7 @@ dom.generateBtn.addEventListener('click', async () => {
 		const k = Number(dom.symbolsPerCard.value);
 		const n = k - 1;
 		if (!isPrime(n)) {
+			dom.summary.textContent = '每張符號數需為 (n+1)，其中 n 為質數。請改為 3, 4, 6, 8, 12, 14 等選項。';
 			alert('每張符號數需為 (n+1)，其中 n 為質數。請改為 3, 4, 6, 8, 12, 14 等選項。');
 			return;
 		}
@@ -527,9 +550,16 @@ dom.generateBtn.addEventListener('click', async () => {
 		if (sourceMode === 'images') {
 			const files = Array.from(dom.imageFiles.files || []);
 			images = await loadImagesFromFiles(files);
+			if (files.length && images.length === 0) {
+				console.warn('所有上傳圖片皆載入失敗，將以數字補足');
+				dom.summary.textContent = '注意：所有上傳圖片皆載入失敗，已以數字補足符號';
+			}
 		}
 		if (sourceMode === 'text') {
 			texts = parseCustomTextSymbols(dom.customText.value);
+			if (texts.length === 0) {
+				dom.summary.textContent = '注意：自訂文字符號為空，已以數字補足符號';
+			}
 		}
 
 		const seed = dom.seed.value || String(Date.now());
@@ -581,7 +611,8 @@ dom.generateBtn.addEventListener('click', async () => {
 		lastGenerated = { design, cards: chosenCards, symbolCanvases, cardCanvases, seed };
 	} catch (err) {
 		console.error(err);
-		alert('生成失敗：' + err.message);
+		dom.summary.textContent = '生成失敗：' + (err && err.message ? err.message : String(err));
+		alert('生成失敗：' + (err && err.message ? err.message : String(err)));
 	} finally {
 		dom.generateBtn.disabled = false;
 	}
