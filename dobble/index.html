@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Dobble 產生器</title>
+	<link rel="stylesheet" href="./style.css" />
+	<!-- JSZip 與 FileSaver 用於匯出 ZIP -->
+	<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+</head>
+<body>
+	<div class="container">
+		<header>
+			<h1>Dobble 產生器</h1>
+			<p>上傳圖片（支援剪成圓形或圓角方形），或新增文字/數字/符號，並依照有限射影平面生成可玩的 Dobble 卡牌。</p>
+		</header>
+
+		<section class="controls">
+			<div class="control-group">
+				<label for="orderSelect">卡牌階數 q（每張卡的圖示數量 = q + 1）：</label>
+				<select id="orderSelect">
+					<option value="2">q = 2（每張 3 個符號，共 7 張卡，需要 7 個符號）</option>
+					<option value="3">q = 3（每張 4 個符號，共 13 張卡，需要 13 個符號）</option>
+					<option value="5" selected>q = 5（每張 6 個符號，共 31 張卡，需要 31 個符號）</option>
+					<option value="7">q = 7（每張 8 個符號，共 57 張卡，需要 57 個符號）</option>
+					<option value="11">q = 11（每張 12 個符號，共 133 張卡，需要 133 個符號）</option>
+				</select>
+			</div>
+
+			<div class="control-row">
+				<div class="control-group">
+					<label>上傳圖片：</label>
+					<input id="imageInput" type="file" accept="image/*" multiple />
+				</div>
+				<div class="control-group">
+					<label>圖片裁切形狀：</label>
+					<select id="imageShapeSelect">
+						<option value="circle" selected>圓形</option>
+						<option value="rounded">圓角方形</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="control-row">
+				<div class="control-group add-text">
+					<label>新增文字符號：</label>
+					<input id="textInput" type="text" placeholder="輸入文字/數字/符號" />
+					<input id="textColor" type="color" value="#222222" title="文字顏色" />
+					<select id="textFontSelect" title="字型">
+						<option value="Noto Sans TC, sans-serif" selected>Noto Sans TC</option>
+						<option value="Noto Serif TC, serif">Noto Serif TC</option>
+						<option value="Inter, system-ui, sans-serif">Inter</option>
+						<option value="Roboto, system-ui, sans-serif">Roboto</option>
+					</select>
+					<button id="addTextBtn" class="btn">加入文字</button>
+				</div>
+			</div>
+
+			<div class="control-row">
+				<div class="control-group">
+					<label>
+						<input id="autoPadToggle" type="checkbox" checked />
+						不足符號時，自動以數字補足
+					</label>
+				</div>
+				<div class="control-group">
+					<button id="clearAllBtn" class="btn btn-secondary">清空全部符號</button>
+				</div>
+			</div>
+		</section>
+
+		<section class="assets">
+			<h2>符號清單 <span id="assetCount" class="muted"></span></h2>
+			<div id="assetList" class="asset-list"></div>
+		</section>
+
+		<section class="actions">
+			<button id="generateBtn" class="btn btn-primary">生成卡牌</button>
+			<button id="downloadZipBtn" class="btn" disabled>下載全部卡牌（ZIP/PNG）</button>
+		</section>
+
+		<section class="preview">
+			<h2>預覽</h2>
+			<div class="preview-grid" id="previewGrid"></div>
+		</section>
+
+		<footer>
+			<p class="muted">說明：選擇 q 後，系統需要 q² + q + 1 個不同符號，並生成同數量的卡牌；任意兩張卡會恰好共享一個相同符號。</p>
+		</footer>
+	</div>
+
+	<script src="./app.js"></script>
+</body>
+</html>
