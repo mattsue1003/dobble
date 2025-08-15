@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Dobble 卡牌產生器</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<header class="app-header">
+		<h1>Dobble 卡牌產生器</h1>
+	</header>
+
+	<main class="app-main">
+		<section class="controls">
+			<div class="control-group">
+				<label for="symbolsPerCard">每張卡的符號數</label>
+				<select id="symbolsPerCard">
+					<option value="3">3（n=2，7張卡，入門）</option>
+					<option value="4">4（n=3，13張卡）</option>
+					<option value="6">6（n=5，31張卡）</option>
+					<option value="8" selected>8（n=7，57張卡，常用）</option>
+					<option value="12">12（n=11，133張卡）</option>
+					<option value="14">14（n=13，183張卡）</option>
+				</select>
+			</div>
+
+			<div class="control-group">
+				<label for="cardsCount">要產生的卡牌數量</label>
+				<input id="cardsCount" type="number" min="1" step="1" value="57">
+				<small id="cardsMaxInfo" class="hint"></small>
+			</div>
+
+			<div class="control-group">
+				<span class="label">符號來源</span>
+				<div class="inline">
+					<label><input type="radio" name="symbolSource" value="images" checked> 上傳圖片</label>
+					<label><input type="radio" name="symbolSource" value="text"> 自訂文字/表情</label>
+					<label><input type="radio" name="symbolSource" value="numbers"> 數字</label>
+				</div>
+			</div>
+
+			<div id="imageSourcePanel" class="control-subpanel">
+				<label for="imageFiles">選擇圖片（至少與需求符號數相同，否則以數字補足）</label>
+				<input id="imageFiles" type="file" accept="image/*" multiple>
+				<div class="control-row">
+					<label for="imageFit">圖片調整</label>
+					<select id="imageFit">
+						<option value="cover" selected>等比裁切填滿（建議）</option>
+						<option value="contain">等比完整顯示（可能留白）</option>
+					</select>
+				</div>
+			</div>
+
+			<div id="textSourcePanel" class="control-subpanel hidden">
+				<label for="customText">自訂符號（以逗號或換行分隔，例如：🍎,🍌,⭐,A,B,C）</label>
+				<textarea id="customText" rows="4" placeholder="在此輸入...\n例如：\n🍎\n🍌\n⭐\nA\nB\nC"></textarea>
+			</div>
+
+			<div class="control-group">
+				<span class="label">符號剪裁形狀</span>
+				<div class="inline">
+					<label><input type="radio" name="cropShape" value="circle" checked> 圓形</label>
+					<label><input type="radio" name="cropShape" value="rounded"> 圓角方形</label>
+					<label><input type="radio" name="cropShape" value="square"> 方形</label>
+				</div>
+			</div>
+
+			<div id="roundedOptions" class="control-subpanel hidden">
+				<label for="cornerRadius">圓角半徑（%）</label>
+				<input id="cornerRadius" type="range" min="0" max="50" value="35">
+				<span id="cornerRadiusVal">35%</span>
+			</div>
+
+			<div class="control-group">
+				<label for="cardSize">預覽卡片像素尺寸</label>
+				<input id="cardSize" type="range" min="300" max="900" value="600">
+				<span id="cardSizeVal">600 px</span>
+			</div>
+
+			<div class="control-group">
+				<label for="seed">隨機種子（同一種子重現相同排版）</label>
+				<input id="seed" type="text" placeholder="例如: my-seed-2025">
+			</div>
+
+			<div class="control-group">
+				<label class="checkbox"><input id="randomRotate" type="checkbox" checked> 符號隨機旋轉</label>
+				<label class="checkbox"><input id="sizeJitter" type="checkbox" checked> 符號大小抖動</label>
+			</div>
+
+			<div class="actions">
+				<button id="generateBtn">產生卡牌</button>
+				<button id="printBtn" class="secondary" disabled>列印/輸出 PDF</button>
+				<button id="saveSettingsBtn" class="secondary">保存設定</button>
+			</div>
+		</section>
+
+		<section class="preview">
+			<h2>預覽</h2>
+			<div id="summary" class="summary"></div>
+			<div id="previewGrid" class="grid"></div>
+		</section>
+	</main>
+
+	<footer class="app-footer">
+		<small>此工具使用有限射影平面生成 Dobble/Spot It! 卡組，確保任兩張卡牌恰有一個相同符號。僅支援質數階（n）之組合：n∈{2,3,5,7,11,13,...}。</small>
+	</footer>
+
+	<script src="app.js"></script>
+</body>
+</html>
